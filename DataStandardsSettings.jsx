@@ -45,13 +45,15 @@ const SectionCard = styled(Card)`
     border-radius: 10px;
     border: 1px solid #e8e8e8;
     margin-bottom: 20px;
-    overflow: hidden;
+    overflow: visible !important;
     
     .ant-card-head {
       background: #fafbfc;
       border-bottom: 1px solid #f0f0f0;
       padding: 18px 20px;
       min-height: auto;
+      border-radius: 10px 10px 0 0;
+      overflow: hidden;
     }
     
     .ant-card-head-title {
@@ -60,6 +62,17 @@ const SectionCard = styled(Card)`
     
     .ant-card-body {
       padding: 20px;
+      overflow: visible !important;
+      position: relative;
+      width: 100%;
+      box-sizing: border-box;
+      margin: 0;
+    }
+    
+    /* Ensure card body content wrapper doesn't clip */
+    .ant-card-body::before {
+      content: '';
+      display: none;
     }
   }
 `;
@@ -114,6 +127,12 @@ const StandardsList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  overflow: visible;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  margin-left: 0;
+  padding-left: 0;
 `;
 
 const ProprietaryGrid = styled.div`
@@ -129,10 +148,32 @@ const StandardCard = styled.div`
   padding: 18px;
   transition: all 0.2s;
   border-left: ${props => props.$proprietary ? '3px solid #0891b2' : 'none'};
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  margin-left: 0;
+  overflow: visible;
+  
+  /* Use box-shadow to ensure left border is visible even if clipped */
+  box-shadow: ${props => {
+    if (props.$proprietary) return 'inset 3px 0 0 #0891b2';
+    const borderColor = props.$active ? '#0891b2' : '#e8e8e8';
+    return `inset 1px 0 0 ${borderColor}, inset 0 1px 0 ${borderColor}, inset 0 -1px 0 ${borderColor}, inset -1px 0 0 ${borderColor}`;
+  }};
+  
+  /* Keep original border for other sides */
+  border-top: 1px solid ${props => props.$active ? '#0891b2' : '#e8e8e8'};
+  border-right: 1px solid ${props => props.$active ? '#0891b2' : '#e8e8e8'};
+  border-bottom: 1px solid ${props => props.$active ? '#0891b2' : '#e8e8e8'};
+  border-left: ${props => props.$proprietary ? '3px solid #0891b2' : `1px solid ${props.$active ? '#0891b2' : '#e8e8e8'}`};
   
   &:hover {
     border-color: ${props => props.$active ? '#0891b2' : '#d0d0d0'};
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: ${props => {
+      if (props.$proprietary) return 'inset 3px 0 0 #0891b2, 0 2px 8px rgba(0, 0, 0, 0.04)';
+      const borderColor = props.$active ? '#0891b2' : '#d0d0d0';
+      return `inset 1px 0 0 ${borderColor}, inset 0 1px 0 ${borderColor}, inset 0 -1px 0 ${borderColor}, inset -1px 0 0 ${borderColor}, 0 2px 8px rgba(0, 0, 0, 0.04)`;
+    }};
   }
 `;
 
